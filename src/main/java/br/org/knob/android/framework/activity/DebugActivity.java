@@ -1,4 +1,4 @@
-package br.gov.rs.tce.inventario.activity;
+package br.org.knob.android.framework.activity;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -7,7 +7,7 @@ import android.util.Log;
  * Created by Ricardo Lecheta on 22/09/2014.
  */
 public class DebugActivity extends android.support.v7.app.AppCompatActivity {
-    protected static final String TAG = "debu";
+    protected static final String TAG = "DebugActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +68,6 @@ public class DebugActivity extends android.support.v7.app.AppCompatActivity {
     }
 
     public String getClassName() {
-        // Retorna o nome da classe sem o pacote
         Class cls = ((Object) this).getClass();
         String s = cls.getSimpleName();
         return s;

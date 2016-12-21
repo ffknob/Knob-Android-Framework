@@ -1,9 +1,10 @@
-package br.gov.rs.tce.inventario.model;
+package br.org.knob.android.framework.model;
 
 import android.content.ContentValues;
-import android.database.sqlite.SQLiteOpenHelper;
 
 public interface GenericModel {
+    public static final String TAG = "GenericModel";
+
     public Long getId();
     public ContentValues getValues();
     public void setValues(ContentValues values);

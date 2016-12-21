@@ -1,9 +1,7 @@
-package br.gov.rs.tce.inventario.fragment;
-
-import android.support.v4.app.Fragment;
-import android.content.Context;
+package br.org.knob.android.framework.fragment;
 
 public class BaseFragment extends DebugFragment {
+    public static final String TAG = "BaseFragment";
 
     public BaseFragment() {
         super();

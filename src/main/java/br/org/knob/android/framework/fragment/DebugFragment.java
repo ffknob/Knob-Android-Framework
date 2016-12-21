@@ -1,4 +1,4 @@
-package br.gov.rs.tce.inventario.fragment;
+package br.org.knob.android.framework.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -101,7 +101,6 @@ public class DebugFragment extends Fragment {
     }
 
     public String getClassName() {
-        // Retorna o nome da classe sem o pacote
         Class cls = ((Object) this).getClass();
         String s = cls.getSimpleName();
         return s;

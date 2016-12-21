@@ -1,7 +1,6 @@
-package br.gov.rs.tce.inventario.dao;
+package br.org.knob.android.framework.dao;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
@@ -11,9 +10,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.gov.rs.tce.inventario.model.GenericModel;
-import br.gov.rs.tce.inventario.model.Setor;
-import br.gov.rs.tce.inventario.util.Util;
+import br.org.knob.android.framework.model.GenericModel;
+import br.org.knob.android.framework.util.Util;
+
 
 public abstract class GenericDAO<T extends GenericModel> implements Serializable {
     private static final String TAG = "GenericDAO";
