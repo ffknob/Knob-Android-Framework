@@ -14,6 +14,7 @@ allprojects {
 }
 
 apply plugin: 'com.android.library'
+apply plugin: 'maven'
 
 android {
     compileSdkVersion 23
@@ -32,6 +33,19 @@ android {
         }
     }
 }
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: "file://D:/Desenvolvimento/repository")
+            pom.groupId = "br.org.knob.android"
+            pom.artifactId = "framework"
+            pom.version = "0.0.1"
+        }
+    }
+}
+
+task install(dependsOn: uploadArchives)
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
