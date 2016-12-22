@@ -2,6 +2,7 @@ package br.org.knob.android.framework.dao;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -10,6 +11,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.org.knob.android.framework.database.DatabaseHelper;
 import br.org.knob.android.framework.model.GenericModel;
 import br.org.knob.android.framework.util.Util;
 
@@ -17,7 +19,7 @@ import br.org.knob.android.framework.util.Util;
 public abstract class GenericDAO<T extends GenericModel> implements Serializable {
     private static final String TAG = "GenericDAO";
 
-    SQLiteOpenHelper dbHelper;
+    protected DatabaseHelper dbHelper;
     private Class<T> entityClass;
 
     public GenericDAO(Class<T> entityClass) {
@@ -26,7 +28,6 @@ public abstract class GenericDAO<T extends GenericModel> implements Serializable
 
     public abstract String getTableName();
 
-    public abstract SQLiteOpenHelper getDbHelper();
 
     public List<T> toList(Cursor cursor) {
         List<T> list = new ArrayList<T>();
@@ -77,24 +78,24 @@ public abstract class GenericDAO<T extends GenericModel> implements Serializable
     };
 
     public long save(T entity) {
-        long id = entity.getId();
+        Long id = entity.getId();
 
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         try {
-            if (id != 0) {
+            if (id != null) {
                 // Update
                 String[] whereArgs = new String[]{String.valueOf(id)};
-                int count = db.update(getTableName(), entity.getValues(), "id=?", whereArgs);
+                int count = db.update(getTableName(), entity.getValues(), "_id=?", whereArgs);
 
-                Util.log(TAG, "Atualizados " + count + " registros na tabela " + getTableName());
+                Util.log(TAG, "Updated " + count + " rows in table " + getTableName());
 
                 return count;
             } else {
                 // Insert
                 id = db.insert(getTableName(), "", entity.getValues());
 
-                Util.log(TAG, "Inserido registro id=" + id + " na tabela " + getTableName());
+                Util.log(TAG, "Inserted row with id=" + id + " in table " + getTableName());
 
                 return id;
             }
@@ -108,9 +109,9 @@ public abstract class GenericDAO<T extends GenericModel> implements Serializable
 
         try {
             String[] whereArgs = new String[]{String.valueOf(entity.getId())};
-            int count = db.delete(getTableName(), "id=?", whereArgs);
+            int count = db.delete(getTableName(), "_id=?", whereArgs);
 
-            Util.log(TAG, "Excluídos " + count + " registros da tabela " + getTableName());
+            Util.log(TAG, "Deleted " + count + " rows from table " + getTableName());
 
             return count;
         } finally {
@@ -124,7 +125,7 @@ public abstract class GenericDAO<T extends GenericModel> implements Serializable
         try {
             int count = db.delete(getTableName(), "1", null);
 
-            Util.log(TAG, "Excluídos " + count + " registros da tabela " + getTableName());
+            Util.log(TAG, "Deleted " + count + " rows from table " + getTableName());
 
             return count;
 
@@ -134,14 +135,14 @@ public abstract class GenericDAO<T extends GenericModel> implements Serializable
     }
 
     public List<T> findAll() {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
 
         List<T> lista = new ArrayList<T>();
 
         try {
             Cursor cursor = db.query(getTableName(), null, null, null, null, null, null, null);
 
-            Util.log(TAG, "Encontrados " + cursor.getCount() + " registros na tabela " + getTableName());
+            Util.log(TAG, "Found " + cursor.getCount() + " rows in table " + getTableName());
 
             return toList(cursor);
         } finally {
@@ -150,22 +151,35 @@ public abstract class GenericDAO<T extends GenericModel> implements Serializable
     }
 
     public T findById(Long id) {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
 
         try {
-            Cursor cursor = db.query(getTableName(), null, "id = " + id, null, null, null, null, null);
+            Cursor cursor = db.query(getTableName(), null, "_id = " + id, null, null, null, null, null);
 
             if (cursor.getCount() == 1) {
                 List<T> list = toList(cursor);
                 T entity = (T) list.get(0);
 
-                Util.log(TAG, "Encontrado registro com id=" + id + " na tabela " + getTableName());
+                Util.log(TAG, "Found row with id=" + id + " in table " + getTableName());
 
                 return entity;
             } else {
-                Util.log(TAG, "Encontrados mais de um registro com id=" + id + " na tabela " + getTableName());
+                Util.log(TAG, "Found more than one row with id=" + id + " in table " + getTableName());
                 throw new SQLiteException();
             }
+        } finally {
+            db.close();
+        }
+    }
+
+    public long count() {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        try {
+            long count  = DatabaseUtils.queryNumEntries(db, getTableName());
+            Util.log(TAG, "Found " + count + " rows in table " + getTableName());
+
+            return count;
         } finally {
             db.close();
         }
