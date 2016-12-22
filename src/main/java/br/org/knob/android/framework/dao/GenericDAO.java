@@ -17,7 +17,7 @@ import br.org.knob.android.framework.util.Util;
 public abstract class GenericDAO<T extends GenericModel> implements Serializable {
     private static final String TAG = "GenericDAO";
 
-    SQLiteOpenHelper dbOpenHelper;
+    SQLiteOpenHelper dbHelper;
     private Class<T> entityClass;
 
     public GenericDAO(Class<T> entityClass) {
@@ -26,7 +26,7 @@ public abstract class GenericDAO<T extends GenericModel> implements Serializable
 
     public abstract String getTableName();
 
-    public abstract SQLiteOpenHelper getDbOpenHelper();
+    public abstract SQLiteOpenHelper getDbHelper();
 
     public List<T> toList(Cursor cursor) {
         List<T> list = new ArrayList<T>();
@@ -79,7 +79,7 @@ public abstract class GenericDAO<T extends GenericModel> implements Serializable
     public long save(T entity) {
         long id = entity.getId();
 
-        SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         try {
             if (id != 0) {
@@ -104,7 +104,7 @@ public abstract class GenericDAO<T extends GenericModel> implements Serializable
     }
 
     public int delete(T entity) {
-        SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         try {
             String[] whereArgs = new String[]{String.valueOf(entity.getId())};
@@ -119,7 +119,7 @@ public abstract class GenericDAO<T extends GenericModel> implements Serializable
     }
 
     public int truncate() {
-        SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         try {
             int count = db.delete(getTableName(), "1", null);
@@ -134,7 +134,7 @@ public abstract class GenericDAO<T extends GenericModel> implements Serializable
     }
 
     public List<T> findAll() {
-        SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         List<T> lista = new ArrayList<T>();
 
@@ -150,7 +150,7 @@ public abstract class GenericDAO<T extends GenericModel> implements Serializable
     }
 
     public T findById(Long id) {
-        SQLiteDatabase db = dbOpenHelper.getWritableDatabase();
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         try {
             Cursor cursor = db.query(getTableName(), null, "id = " + id, null, null, null, null, null);

@@ -13,7 +13,14 @@ public class Util {
     public static void toast(Context context, String msg) {
         Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
     }
-
+	
+	/*public static void snack(Context context, String msg) {
+        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+		Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+    }*/
+	
+	
     public static void log(String tag, String mensagem) {
         if(Settings.getInstance().isLog()) {
             // TODO: registrar no BD
