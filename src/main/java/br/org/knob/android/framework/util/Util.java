@@ -4,7 +4,7 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
-import br.org.knob.android.framework.settings.Settings;
+import br.org.knob.android.framework.settings.KafSettings;
 
 
 public class Util {
@@ -22,7 +22,7 @@ public class Util {
 	
 	
     public static void log(String tag, String mensagem) {
-        if(Settings.getInstance().isLog()) {
+        if(KafSettings.getInstance().isLog()) {
             // TODO: registrar no BD
             Log.d(tag, mensagem);
         }
