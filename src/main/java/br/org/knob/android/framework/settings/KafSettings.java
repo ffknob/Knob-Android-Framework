@@ -19,28 +19,27 @@ public class KafSettings extends AbstractSettings {
     private static KafSettings kafSettings;
 
     private KafSettings() {
-        super();
-
-        Setting isOnline = new Setting<Boolean>(SETTINGS_ONLINE, DEFAULT_ONLINE);
-        settings.put(SETTINGS_ONLINE, isOnline);
-
-        Setting isLog = new Setting<Boolean>(SETTINGS_LOG, DEFAULT_LOG);
-        settings.put(SETTINGS_LOG, isLog);
     }
 
     public static KafSettings getInstance() {
-        if(kafSettings == null) {
+        if (kafSettings == null) {
             kafSettings = new KafSettings();
         }
 
         return kafSettings;
     }
 
-    public Boolean isOnline() {
-        if(settings != null) {
-            Setting setting = (Setting) settings.get(SETTINGS_ONLINE);
+    @Override
+    public void initialize() {
+        kafSettings.set(SETTINGS_ONLINE, DEFAULT_ONLINE);
+        kafSettings.set(SETTINGS_LOG, DEFAULT_LOG);
+    }
 
-            if(setting != null) {
+    public Boolean isOnline() {
+        if (kafSettings != null) {
+            Setting setting = (Setting) kafSettings.get(SETTINGS_ONLINE);
+
+            if (setting != null) {
                 return (Boolean) setting.getValue();
             }
         }
@@ -49,10 +48,10 @@ public class KafSettings extends AbstractSettings {
     }
 
     public Boolean isLog() {
-        if(settings != null) {
-            Setting setting = (Setting) settings.get(SETTINGS_LOG);
+        if (kafSettings != null) {
+            Setting setting = (Setting) kafSettings.get(SETTINGS_LOG);
 
-            if(setting != null) {
+            if (setting != null) {
                 return (Boolean) setting.getValue();
             }
         }

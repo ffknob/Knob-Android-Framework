@@ -1,14 +1,11 @@
 package br.org.knob.android.framework.activity;
 
 import android.content.Context;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 
 public class BaseActivity extends DebugActivity {
     private static final String TAG = "BaseActivity";
-
-    protected DrawerLayout menuLateralLayout;
 
     public BaseActivity() {
         super();
@@ -27,6 +24,4 @@ public class BaseActivity extends DebugActivity {
     protected ActionBar getToolbar() {
         return getSupportActionBar();
     }
-
-
 }

@@ -17,6 +17,7 @@ public class SettingsFragment extends PreferenceFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Looks for the resource id passed by the activity
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             int settingsResource = bundle.getInt(AbstractSettings.PARAM_SETTINGS_RESOURCE_ID, 0);
