@@ -37,10 +37,10 @@ public class KafSettings extends AbstractSettings {
 
     public Boolean isOnline() {
         if (kafSettings != null) {
-            Setting setting = (Setting) kafSettings.get(SETTINGS_ONLINE);
+            Boolean isOnline = (Boolean) kafSettings.get(SETTINGS_ONLINE);
 
-            if (setting != null) {
-                return (Boolean) setting.getValue();
+            if (isOnline != null) {
+                return isOnline;
             }
         }
 
@@ -49,10 +49,10 @@ public class KafSettings extends AbstractSettings {
 
     public Boolean isLog() {
         if (kafSettings != null) {
-            Setting setting = (Setting) kafSettings.get(SETTINGS_LOG);
+            Boolean isLog = (Boolean) kafSettings.get(SETTINGS_LOG);
 
-            if (setting != null) {
-                return (Boolean) setting.getValue();
+            if (isLog != null) {
+                return isLog;
             }
         }
 

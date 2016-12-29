@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Knob Android Framework</string>
 
+    <string name="kaf_namespace">http://schemas.android.com/apk/res/br.org.knob.android.framework</string>
+
     <!-- Framework kafSettings -->
     <string name="kaf_settings_is_online">Online</string>
     <string name="kaf_settings_is_online_desc">The app will be used connected to a network so it could retrieve and send data from/to central repository</string>
