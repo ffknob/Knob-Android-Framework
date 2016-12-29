@@ -2,10 +2,10 @@
 <resources>
 
     <declare-styleable name="NumberPickerPreference">
-        <attr name="maxValue" format="integer" />
         <attr name="minValue" format="integer" />
-        <attr name="maxExternal" format="string" />
+        <attr name="maxValue" format="integer" />
         <attr name="minExternal" format="string" />
+        <attr name="maxExternal" format="string" />
     </declare-styleable>
 
 </resources>

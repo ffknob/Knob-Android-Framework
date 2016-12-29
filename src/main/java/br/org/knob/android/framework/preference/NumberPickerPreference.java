@@ -23,9 +23,15 @@ public class NumberPickerPreference extends DialogPreference {
     private String minExternalKey, maxExternalKey;
     private Integer number = 0;
 
-
     public NumberPickerPreference(Context context, AttributeSet attrs) {
-        super(context, attrs, 0);
+        this(context, attrs,  android.R.attr.dialogPreferenceStyle);
+    }
+
+    public NumberPickerPreference(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+
+        // Make custom preference look like android's native preferences
+        setWidgetLayoutResource(defStyleAttr); //Resources.getSystem().getIdentifier("dialogPreferenceStyle", "attr", "android"));
 
         TypedArray dialogType = context.obtainStyledAttributes(attrs, new int[]{Resources.getSystem().getIdentifier("DialogPreference", "styleable", "android")}, 0, 0);
         TypedArray numberPickerType = context.obtainStyledAttributes(attrs, R.styleable.NumberPickerPreference, 0, 0);
@@ -54,7 +60,6 @@ public class NumberPickerPreference extends DialogPreference {
         if (minExternalKey != null) {
             min = getSharedPreferences().getInt(minExternalKey, minValue);
         }
-
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.preference_number_picker_dialog, null);
 
@@ -63,35 +68,26 @@ public class NumberPickerPreference extends DialogPreference {
         // Initialize
         numberPicker.setMaxValue(max);
         numberPicker.setMinValue(min);
-        numberPicker.setValue(getPersistedInt(defaultValue));
+        numberPicker.setValue(Integer.parseInt(getPersistedString((new Integer(defaultValue).toString()))));
         numberPicker.setWrapSelectorWheel(false);
 
-
         // No keyboard popup
-        EditText textInput = (EditText) numberPicker.findViewById(Resources.getSystem().getIdentifier("numberpicker_input", "styleable", "android"));
-        textInput.setCursorVisible(false);
-        textInput.setFocusable(false);
-        textInput.setFocusableInTouchMode(false);
+        EditText textInput = (EditText) numberPicker.findViewById(Resources.getSystem().getIdentifier("numberpicker_input", "id", "android"));
+        if(textInput != null) {
+            textInput.setCursorVisible(false);
+            textInput.setFocusable(false);
+            textInput.setFocusableInTouchMode(false);
+        }
 
-        return numberPicker;
+        return view;
     }
 
     @Override
     protected void onDialogClosed(boolean positiveResult) {
         if (positiveResult) {
             numberPicker.clearFocus();
-            setValue(numberPicker.getValue());
+            persistInt(numberPicker.getValue());
         }
-    }
-
-    @Override
-    protected void onSetInitialValue(boolean restoreValue, Object defaultValue) {
-        setValue(restoreValue ? getPersistedInt(number) : (Integer) defaultValue);
-    }
-
-    @Override
-    protected Object onGetDefaultValue(TypedArray a, int index) {
-        return a.getInt(index, 0);
     }
 
     public void setMinValue(int value) {
@@ -100,16 +96,5 @@ public class NumberPickerPreference extends DialogPreference {
 
     public void setMaxValue(int value) {
         numberPicker.setMaxValue(value);
-    }
-
-    public void setValue(int value) {
-        if (shouldPersist()) {
-            persistInt(value);
-        }
-
-        if (value != number) {
-            number = value;
-            notifyChanged();
-        }
     }
 }
