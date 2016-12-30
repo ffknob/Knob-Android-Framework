@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.preference.DialogPreference;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -31,7 +32,7 @@ public class NumberPickerPreference extends DialogPreference {
         super(context, attrs, defStyleAttr);
 
         // Make custom preference look like android's native preferences
-        setWidgetLayoutResource(defStyleAttr); //Resources.getSystem().getIdentifier("dialogPreferenceStyle", "attr", "android"));
+        //setWidgetLayoutResource(defStyleAttr); //Resources.getSystem().getIdentifier("dialogPreferenceStyle", "attr", "android"));
 
         TypedArray dialogType = context.obtainStyledAttributes(attrs, new int[]{Resources.getSystem().getIdentifier("DialogPreference", "styleable", "android")}, 0, 0);
         TypedArray numberPickerType = context.obtainStyledAttributes(attrs, R.styleable.NumberPickerPreference, 0, 0);
@@ -60,6 +61,7 @@ public class NumberPickerPreference extends DialogPreference {
         if (minExternalKey != null) {
             min = getSharedPreferences().getInt(minExternalKey, minValue);
         }
+
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.preference_number_picker_dialog, null);
 

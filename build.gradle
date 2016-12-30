@@ -37,7 +37,7 @@ android {
 uploadArchives {
     repositories {
         mavenDeployer {
-            repository(url: "file://D:/Desenvolvimento/repository")
+            repository(url: "file://C:/Desenvolvimento/repository")
             pom.groupId = "br.org.knob.android"
             pom.artifactId = "framework"
             pom.version = "0.0.1"
