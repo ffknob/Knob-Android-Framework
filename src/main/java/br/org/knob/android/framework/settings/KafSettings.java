@@ -1,9 +1,6 @@
 package br.org.knob.android.framework.settings;
 
-import java.util.HashMap;
-
 import br.org.knob.android.framework.R;
-import br.org.knob.android.framework.model.Setting;
 
 public class KafSettings extends AbstractSettings {
     public static final String TAG = "KafSettings";

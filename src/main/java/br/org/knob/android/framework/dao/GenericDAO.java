@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
-import android.database.sqlite.SQLiteOpenHelper;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -28,6 +27,7 @@ public abstract class GenericDAO<T extends GenericModel> implements Serializable
 
     public abstract String getTableName();
 
+    public abstract String getIdColumnName();
 
     public List<T> toList(Cursor cursor) {
         List<T> list = new ArrayList<T>();
@@ -167,6 +167,44 @@ public abstract class GenericDAO<T extends GenericModel> implements Serializable
                 Util.log(TAG, "Found more than one row with id=" + id + " in table " + getTableName());
                 throw new SQLiteException();
             }
+        } finally {
+            db.close();
+        }
+    }
+
+    public T findFirst(String columnName) {
+        String query = "SELECT * FROM " + getTableName() + " ORDER BY " + columnName + " ASC LIMIT 1";
+
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        try {
+            Cursor cursor = db.rawQuery(query, null);
+
+            List<T> list = toList(cursor);
+            T entity = (T) list.get(0);
+
+            Util.log(TAG, "Row with id=" + entity.getId() + " is the fisrt one in in table " + getTableName() + " when order by " + columnName);
+
+            return entity;
+        } finally {
+            db.close();
+        }
+    }
+
+    public T findLast(String columnName) {
+        String query = "SELECT * FROM " + getTableName() + " ORDER BY " + columnName + " DESC LIMIT 1";
+
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        try {
+            Cursor cursor = db.rawQuery(query, null);
+
+                List<T> list = toList(cursor);
+                T entity = (T) list.get(0);
+
+                Util.log(TAG, "Row with id=" + entity.getId() + " is the latest one in in table " + getTableName() + " when order by " + columnName);
+
+                return entity;
         } finally {
             db.close();
         }

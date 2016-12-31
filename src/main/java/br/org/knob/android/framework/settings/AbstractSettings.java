@@ -1,11 +1,8 @@
 package br.org.knob.android.framework.settings;
 
-import android.content.SharedPreferences;
-
 import java.util.HashMap;
 
 import br.org.knob.android.framework.model.Setting;
-import br.org.knob.android.framework.util.Util;
 
 public abstract class AbstractSettings {
     public static final String TAG = "AbstractSettings";

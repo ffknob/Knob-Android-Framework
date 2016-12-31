@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <declare-styleable name="NumberPickerPreference">
-        <attr name="minValue" format="integer" />
-        <attr name="maxValue" format="integer" />
-        <attr name="minExternal" format="string" />
-        <attr name="maxExternal" format="string" />
+    <declare-styleable name="NumberPickerWheelPreference">
+        <attr name="numberPickerWheelPreference_minValue" format="integer" />
+        <attr name="numberPickerWheelPreference_maxValue" format="integer" />
+        <attr name="numberPickerWheelPreference_minExternal" format="string" />
+        <attr name="numberPickerWheelPreference_maxExternal" format="string" />
+        <attr name="numberPickerWheelPreference_cycleValues" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="SeekBarPreference">
+        <attr name="seekBarPreference_minValue" format="integer" />
+        <attr name="seekBarPreference_maxValue" format="integer" />
+        <attr name="seekBarPreference_interval" format="integer" />
+        <attr name="seekBarPreference_units" format="string" />
     </declare-styleable>
 
 </resources>

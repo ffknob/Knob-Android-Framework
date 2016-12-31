@@ -1,6 +1,5 @@
 package br.org.knob.android.framework.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 

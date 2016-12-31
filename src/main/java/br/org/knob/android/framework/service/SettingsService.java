@@ -2,11 +2,9 @@ package br.org.knob.android.framework.service;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.Preference;
 import android.preference.PreferenceManager;
 
 import br.org.knob.android.framework.adapter.AbstractSettingsAdapter;
-import br.org.knob.android.framework.model.Setting;
 import br.org.knob.android.framework.settings.AbstractSettings;
 import br.org.knob.android.framework.util.Util;
 
