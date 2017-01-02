@@ -1,6 +1,7 @@
 package br.org.knob.android.framework.dao;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
@@ -18,27 +19,51 @@ import br.org.knob.android.framework.util.Util;
 public abstract class GenericDAO<T extends GenericModel> implements Serializable {
     private static final String TAG = "GenericDAO";
 
-    protected DatabaseHelper dbHelper;
+    private static DatabaseHelper dbHelper;
+    private static SQLiteDatabase db;
+    private Context context;
+    private static String dbName;
+    private static int dbVersion;
+
     private Class<T> entityClass;
 
-    public GenericDAO(Class<T> entityClass) {
+    public GenericDAO(Class<T> entityClass, Context context, String dbName, int dbVersion) {
         this.entityClass = entityClass;
+
+        this.context = context;
+        this.dbName = dbName;
+        this.dbVersion = dbVersion;
+
+        if(dbHelper == null) {
+            dbHelper = new DatabaseHelper(context, dbName, dbVersion);
+        }
     }
 
+    public abstract Context getContext();
+    public abstract String getDbName();
+    public abstract int getDbVersion();
     public abstract String getTableName();
-
     public abstract String getIdColumnName();
+
+    private void dealWithException(Exception e) {
+        //catch(SQLiteException e) {
+        //    e.printStackTrace();
+        //} catch (Exception e) {
+        //    e.printStackTrace();
+        //}
+        e.printStackTrace();
+    }
 
     public List<T> toList(Cursor cursor) {
         List<T> list = new ArrayList<T>();
 
-        if(cursor.moveToFirst()) {
+        if (cursor.moveToFirst()) {
             do {
                 ContentValues values = new ContentValues();
-                for(int i = 0; i < cursor.getColumnCount(); i++) {
+                for (int i = 0; i < cursor.getColumnCount(); i++) {
                     String columnName = cursor.getColumnName(i);
 
-                    switch(cursor.getType(i)) {
+                    switch (cursor.getType(i)) {
                         case Cursor.FIELD_TYPE_NULL:
                             values.putNull(columnName);
                             break;
@@ -71,16 +96,69 @@ public abstract class GenericDAO<T extends GenericModel> implements Serializable
                 }
                 entity.setValues(values);
                 list.add(entity);
-            } while(cursor.moveToNext());
+            } while (cursor.moveToNext());
         }
 
         return list;
-    };
+    }
+
+    public static SQLiteDatabase getDb() {
+        if (db == null) {
+            try {
+                db = dbHelper.getWritableDatabase();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        return db;
+    }
+
+    public void begin() {
+        db = getDb();
+
+        try {
+            db.beginTransaction();
+        } catch (Exception e) {
+            dealWithException(e);
+        }
+    }
+
+    public void commit() {
+        db = getDb();
+
+        try {
+            db.setTransactionSuccessful();
+            db.endTransaction();
+        } catch (Exception e) {
+            dealWithException(e);
+        }
+    }
+
+    public void rollback() {
+        db = getDb();
+
+        try {
+            db.endTransaction();
+        } catch (Exception e) {
+            dealWithException(e);
+        }
+    }
+
+    public void close() {
+        db = getDb();
+
+        try {
+            db.close();
+        } catch (Exception e) {
+            dealWithException(e);
+        }
+    }
 
     public long save(T entity) {
         Long id = entity.getId();
 
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db = getDb();
 
         try {
             if (id != null) {
@@ -99,13 +177,15 @@ public abstract class GenericDAO<T extends GenericModel> implements Serializable
 
                 return id;
             }
-        } finally {
-            db.close();
+        } catch (Exception e) {
+            dealWithException(e);
         }
+
+        return -1;
     }
 
     public int delete(T entity) {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db = getDb();
 
         try {
             String[] whereArgs = new String[]{String.valueOf(entity.getId())};
@@ -114,13 +194,15 @@ public abstract class GenericDAO<T extends GenericModel> implements Serializable
             Util.log(TAG, "Deleted " + count + " rows from table " + getTableName());
 
             return count;
-        } finally {
-            db.close();
+        } catch (Exception e) {
+            dealWithException(e);
         }
+
+        return -1;
     }
 
     public int truncate() {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        db = getDb();
 
         try {
             int count = db.delete(getTableName(), "1", null);
@@ -129,15 +211,15 @@ public abstract class GenericDAO<T extends GenericModel> implements Serializable
 
             return count;
 
-        } finally {
-            db.close();
+        } catch (Exception e) {
+            dealWithException(e);
         }
+
+        return -1;
     }
 
     public List<T> findAll() {
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-
-        List<T> lista = new ArrayList<T>();
+        db = getDb();
 
         try {
             Cursor cursor = db.query(getTableName(), null, null, null, null, null, null, null);
@@ -145,13 +227,15 @@ public abstract class GenericDAO<T extends GenericModel> implements Serializable
             Util.log(TAG, "Found " + cursor.getCount() + " rows in table " + getTableName());
 
             return toList(cursor);
-        } finally {
-            db.close();
+        } catch (Exception e) {
+            dealWithException(e);
         }
+
+        return null;
     }
 
     public T findById(Long id) {
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        db = getDb();
 
         try {
             Cursor cursor = db.query(getTableName(), null, "_id = " + id, null, null, null, null, null);
@@ -167,59 +251,81 @@ public abstract class GenericDAO<T extends GenericModel> implements Serializable
                 Util.log(TAG, "Found more than one row with id=" + id + " in table " + getTableName());
                 throw new SQLiteException();
             }
-        } finally {
-            db.close();
+        } catch (Exception e) {
+            dealWithException(e);
         }
+
+        return null;
     }
 
     public T findFirst(String columnName) {
         String query = "SELECT * FROM " + getTableName() + " ORDER BY " + columnName + " ASC LIMIT 1";
 
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        db = getDb();
 
         try {
             Cursor cursor = db.rawQuery(query, null);
 
             List<T> list = toList(cursor);
-            T entity = (T) list.get(0);
 
-            Util.log(TAG, "Row with id=" + entity.getId() + " is the fisrt one in in table " + getTableName() + " when order by " + columnName);
+            T entity = null;
+            if(!list.isEmpty()) {
+                entity = (T) list.get(0);
+                Util.log(TAG, "Row with id=" + entity.getId() + " is the fisrt one in in table " + getTableName() + " when order by " + columnName);
+            } else {
+                entity = null;
+                Util.log(TAG, "Could not find first row of table " + getTableName());
+            }
 
             return entity;
-        } finally {
-            db.close();
+
+        } catch (Exception e) {
+            dealWithException(e);
         }
+
+        return null;
     }
 
     public T findLast(String columnName) {
         String query = "SELECT * FROM " + getTableName() + " ORDER BY " + columnName + " DESC LIMIT 1";
 
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        db = getDb();
 
         try {
             Cursor cursor = db.rawQuery(query, null);
 
-                List<T> list = toList(cursor);
-                T entity = (T) list.get(0);
+            List<T> list = toList(cursor);
 
+            T entity = null;
+            if(!list.isEmpty()) {
+                entity = (T) list.get(0);
                 Util.log(TAG, "Row with id=" + entity.getId() + " is the latest one in in table " + getTableName() + " when order by " + columnName);
+            } else {
+                entity = null;
+                Util.log(TAG, "Could not find last row of table " + getTableName());
+            }
 
-                return entity;
-        } finally {
-            db.close();
+            return entity;
+
+        } catch (Exception e) {
+            dealWithException(e);
         }
+
+        return null;
     }
 
     public long count() {
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        db = getDb();
 
         try {
-            long count  = DatabaseUtils.queryNumEntries(db, getTableName());
+            long count = DatabaseUtils.queryNumEntries(db, getTableName());
             Util.log(TAG, "Found " + count + " rows in table " + getTableName());
 
             return count;
-        } finally {
-            db.close();
+        } catch (Exception e) {
+            dealWithException(e);
         }
+
+        return -1;
     }
 }
