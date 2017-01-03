@@ -19,11 +19,12 @@ import br.org.knob.android.framework.util.Util;
 public abstract class GenericDAO<T extends GenericModel> implements Serializable {
     private static final String TAG = "GenericDAO";
 
-    private static DatabaseHelper dbHelper;
-    private static SQLiteDatabase db;
+    private DatabaseHelper dbHelper;
+    private SQLiteDatabase db;
+
     private Context context;
-    private static String dbName;
-    private static int dbVersion;
+    private String dbName;
+    private int dbVersion;
 
     private Class<T> entityClass;
 
@@ -34,9 +35,7 @@ public abstract class GenericDAO<T extends GenericModel> implements Serializable
         this.dbName = dbName;
         this.dbVersion = dbVersion;
 
-        if(dbHelper == null) {
-            dbHelper = new DatabaseHelper(context, dbName, dbVersion);
-        }
+        dbHelper = new DatabaseHelper(context, dbName, dbVersion);
     }
 
     public abstract Context getContext();
@@ -102,7 +101,7 @@ public abstract class GenericDAO<T extends GenericModel> implements Serializable
         return list;
     }
 
-    public static SQLiteDatabase getDb() {
+    public SQLiteDatabase getDb() {
         if (db == null) {
             try {
                 db = dbHelper.getWritableDatabase();
