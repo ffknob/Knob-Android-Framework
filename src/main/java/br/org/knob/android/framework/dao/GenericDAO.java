@@ -7,6 +7,7 @@ import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 
+import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -80,7 +81,11 @@ public abstract class GenericDAO<T extends GenericModel> implements Serializable
                             break;
 
                         case Cursor.FIELD_TYPE_BLOB:
-                            // TODO: put BLOB
+                            if(!cursor.isNull(i)) {
+                                values.put(columnName, cursor.getBlob(i));
+                            } else {
+                                values.putNull(columnName);
+                            }
                             break;
                     }
                 }
@@ -154,6 +159,14 @@ public abstract class GenericDAO<T extends GenericModel> implements Serializable
         }
     }
 
+    public boolean isPersisted(T entity) {
+        if(entity.getId() != null) {
+            return true;
+        }
+
+        return false;
+    }
+
     public long save(T entity) {
         Long id = entity.getId();
 
@@ -171,7 +184,7 @@ public abstract class GenericDAO<T extends GenericModel> implements Serializable
             } else {
                 // Insert
                 id = db.insert(getTableName(), "", entity.getValues());
-
+                entity.setId(id);
                 Util.log(TAG, "Inserted row with id=" + id + " in table " + getTableName());
 
                 return id;

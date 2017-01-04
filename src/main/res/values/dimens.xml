@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- General -->
+    <dimen name="kaf_small_padding">10dp</dimen>
+    <dimen name="kaf_default_padding">16dp</dimen>
+
+    <dimen name="kaf_very_small_margin">5dp</dimen>
+    <dimen name="kaf_small_margin">10dp</dimen>
+    <dimen name="kaf_default_margin">16dp</dimen>
+    <dimen name="kaf_big_margin">32dp</dimen>
+
+    <dimen name="kaf_very_small_text_size">10dp</dimen>
+    <dimen name="kaf_small_text_size">14dp</dimen>
+    <dimen name="kaf_medium_text_size">20dp</dimen>
+    <dimen name="kaf_big_text_size">32dp</dimen>
+
+    <!-- Forms -->
+    <dimen name="kaf_small_form_field_width">128dp</dimen>
+    <dimen name="kaf_medium_form_field_width">256dp</dimen>
+    <dimen name="kaf_big_form_field_width">512dp</dimen>
+
+    <dimen name="kaf_small_form_button_width">128dp</dimen>
+    <dimen name="kaf_medium_form_button_width">256dp</dimen>
+    <dimen name="kaf_big_form_button_width">512dp</dimen>
+
+</resources>
