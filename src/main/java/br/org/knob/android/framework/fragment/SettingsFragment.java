@@ -29,6 +29,6 @@ public class SettingsFragment extends PreferenceFragment {
             }
         }
 
-
+        setRetainInstance(true);
     }
 }

@@ -84,8 +84,6 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
             seekBar.setEnabled(false);
         }
 
-        seekBar.setProgress(currentValue);
-
         // Current value label
         currentValueView = (TextView) view.findViewById(R.id.seekbar_current_value);
         String currentValueText = units != null ? String.valueOf(progress) + units : String.valueOf(progress);
@@ -98,6 +96,8 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
         // Max value label
         TextView maxValueView = (TextView) view.findViewById(R.id.seekbar_max_value);
         maxValueView.setText(String.valueOf(maxValue));
+
+        seekBar.setProgress(currentValue);
     }
 
     @Override
