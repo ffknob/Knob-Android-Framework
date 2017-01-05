@@ -47,5 +47,21 @@ public class KafManager {
 
     private void initializeDb() {
         // Framework database
+
+        //this.deleteDatabase(Settings.DEFAULT_DATABASE_NAME);
+
+        // TODO: get from settings
+        DatabaseHelper dbHelper = new DatabaseHelper(context, KafSettings.DATABASE_NAME, KafSettings.DATABASE_VERSION) {
+            @Override
+            public void onCreate(SQLiteDatabase db) {
+                // Locations saved from the map
+                db.execSQL("create table if not exists locations (_id integer primary key autoincrement, date text not null, latitude text not null, longitude text not null, snapshot blob, thumbnail blob);");
+
+                Util.log(TAG, "Created table locations");
+            }
+        };
+
+        // Just to force it to create database if not exists
+        dbHelper.getReadableDatabase();
     }
 }

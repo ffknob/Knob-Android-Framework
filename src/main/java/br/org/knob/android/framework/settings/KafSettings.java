@@ -9,6 +9,10 @@ public class KafSettings extends AbstractSettings {
     public static final String SETTINGS_ONLINE = "kaf-settings-online";
     public static final String SETTINGS_LOG = "kaf-settings-log";
 
+    // Database
+    public static final String DATABASE_NAME = "kaf";
+    public static final Integer DATABASE_VERSION = 1;
+
     // Defaults
     public static final Boolean DEFAULT_ONLINE = true;
     public static final Boolean DEFAULT_LOG = true;

@@ -2,8 +2,13 @@ package br.org.knob.android.framework.fragment;
 
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import br.org.knob.android.framework.R;
+import br.org.knob.android.framework.service.LocationService;
+import br.org.knob.android.framework.service.MapService;
 import br.org.knob.android.framework.settings.AbstractSettings;
 import br.org.knob.android.framework.util.Util;
 

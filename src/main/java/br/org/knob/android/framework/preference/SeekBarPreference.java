@@ -3,8 +3,10 @@ package br.org.knob.android.framework.preference;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.preference.DialogPreference;
 import android.preference.Preference;
 import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
@@ -13,7 +15,7 @@ import android.widget.TextView;
 
 import br.org.knob.android.framework.R;
 
-public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarChangeListener {
+public class SeekBarPreference extends DialogPreference implements SeekBar.OnSeekBarChangeListener {
     public static final String TAG = "SeekBarPreference";
 
     private static final String ATTR_MIN_VALUE = "minValue";
@@ -36,6 +38,7 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
         // Make custom preference look like android's native preferences
         //setWidgetLayoutResource(defStyle); //Resources.getSystem().getIdentifier("dialogPreferenceStyle", "attr", "android"));
 
+        TypedArray dialogType = context.obtainStyledAttributes(attrs, new int[]{Resources.getSystem().getIdentifier("DialogPreference", "styleable", "android")}, 0, 0);
         TypedArray seekBarType = context.obtainStyledAttributes(attrs, R.styleable.SeekBarPreference, 0, 0);
 
         minValue = seekBarType.getInt(R.styleable.SeekBarPreference_seekBarPreference_minValue, 0);
@@ -43,46 +46,22 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
         interval = seekBarType.getInt(R.styleable.SeekBarPreference_seekBarPreference_interval, 0);
         units = seekBarType.getString(R.styleable.SeekBarPreference_seekBarPreference_units);
 
-        defaultValue = seekBarType.getInt(Resources.getSystem().getIdentifier("Preference_defaultValue", "styleable", "android"), minValue);
+        defaultValue = dialogType.getInt(Resources.getSystem().getIdentifier("Preference_defaultValue", "styleable", "android"), minValue);
 
-        setWidgetLayoutResource(R.layout.preference_seekbar);
-
+        dialogType.recycle();
         seekBarType.recycle();
     }
 
     @Override
-    protected View onCreateView(ViewGroup parent) {
-        View view = super.onCreateView(parent);
+    protected View onCreateDialogView() {
 
-        return view;
-    }
-
-    @Override
-    protected void onBindView(View view) {
-        super.onBindView(view);
+        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.preference_seekbar, null);
 
         seekBar = (SeekBar) view.findViewById(R.id.seekbar);
         seekBar.setMax(maxValue);
         seekBar.setProgress(progress);
         seekBar.setOnSeekBarChangeListener(this);
-
-        setWidgetLayoutResource(R.layout.preference_seekbar);
-
-        ViewGroup newContainer = (ViewGroup) view.findViewById(R.id.seekbar_container);
-        ViewParent oldContainer = seekBar.getParent();
-
-            if (oldContainer != newContainer) {
-                if (oldContainer != null) {
-                    ((ViewGroup) oldContainer).removeView(seekBar);
-                }
-
-                newContainer.removeAllViews();
-                newContainer.addView(seekBar, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            }
-
-        if (view != null && !view.isEnabled()) {
-            seekBar.setEnabled(false);
-        }
 
         // Current value label
         currentValueView = (TextView) view.findViewById(R.id.seekbar_current_value);
@@ -98,6 +77,8 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
         maxValueView.setText(String.valueOf(maxValue));
 
         seekBar.setProgress(currentValue);
+
+        return view;
     }
 
     @Override
@@ -118,9 +99,14 @@ public class SeekBarPreference extends Preference implements SeekBar.OnSeekBarCh
 
         currentValue = newValue;
 
-        persistInt(newValue);
-
         currentValueView.setText(String.valueOf(progress));
+    }
+
+    @Override
+    protected void onDialogClosed(boolean positiveResult) {
+        if (positiveResult) {
+            persistInt(currentValue);
+        }
     }
 
     @Override
