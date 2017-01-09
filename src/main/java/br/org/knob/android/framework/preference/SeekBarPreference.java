@@ -99,7 +99,7 @@ public class SeekBarPreference extends DialogPreference implements SeekBar.OnSee
 
         currentValue = newValue;
 
-        currentValueView.setText(String.valueOf(progress));
+        currentValueView.setText(String.valueOf(progress) + units);
     }
 
     @Override
