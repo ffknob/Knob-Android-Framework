@@ -27,9 +27,15 @@ public class MapService extends GenericService implements GoogleApiClient.Connec
     private static GoogleApiClient mGoogleApiClient;
     private GoogleMap map;
 
+    private LocationService locationService;
+
     public MapService(Context context) {
         this.context = context;
 
+        // To retrieve and save our locations
+        locationService = new LocationService(context);
+
+        // Google Maps API
         if(mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(context)
                     .addConnectionCallbacks(this)
@@ -93,11 +99,21 @@ public class MapService extends GenericService implements GoogleApiClient.Connec
 
         if(location == null) {
             // Couldn't get last know location from GPS, will try to get it from saved locations
-            LocationService locationService = new LocationService(context);
             location = locationService.findLatest();
         }
 
         return location;
+    }
+
+    public void setLastKnownLocation() {
+        // Last know location
+        Location lastKnownLocation = getLastKnowLocation();
+
+        // Save location
+        locationService.save(lastKnownLocation);
+
+        // Send map to that location
+        setMapLocation(lastKnownLocation, true);
     }
 
     public void setMapLocation(Location location, boolean animateCamera) {
