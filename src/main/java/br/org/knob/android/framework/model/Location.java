@@ -122,8 +122,6 @@ public class Location implements GenericModel, Serializable, Comparable<Location
         }
     }
 
-    ;
-
     public String getLatitude() {
         return latitude;
     }
@@ -141,11 +139,21 @@ public class Location implements GenericModel, Serializable, Comparable<Location
     }
 
     public android.location.Location getAndroidLocation() {
+        resetAndroidLocation();
+
         return androidLocation;
     }
 
     public void setAndroidLocation(android.location.Location androidLocation) {
         this.androidLocation = androidLocation;
+    }
+
+    public void resetAndroidLocation() {
+        if(latitude != null && longitude != null) {
+            this.androidLocation = new android.location.Location("");
+            androidLocation.setLatitude(new Double(latitude));
+            androidLocation.setLongitude(new Double(longitude));
+        }
     }
 
     public Bitmap getSnapshot() {
