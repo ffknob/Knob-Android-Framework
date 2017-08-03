@@ -20,7 +20,7 @@ public class Location implements GenericModel, Serializable, Comparable<Location
     private Date date;
     private String latitude;
     private String longitude;
-    private android.location.Location androidLocation;
+    private transient android.location.Location androidLocation;
     private transient Bitmap snapshot;
     private transient Bitmap thumbnail;
 
