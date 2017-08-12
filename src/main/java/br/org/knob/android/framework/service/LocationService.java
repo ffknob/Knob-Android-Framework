@@ -66,4 +66,8 @@ public class LocationService extends GenericService {
     public Location findLatest() {
         return locationDAO.findLast(locationDAO.getIdColumnName());
     }
+
+    public Location findById(Long id) {
+        return locationDAO.findById(id);
+    }
 }
