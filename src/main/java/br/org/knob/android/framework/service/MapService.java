@@ -1,8 +1,14 @@
 package br.org.knob.android.framework.service;
 
+import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -15,6 +21,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Date;
 
+import br.org.knob.android.framework.R;
 import br.org.knob.android.framework.model.Location;
 import br.org.knob.android.framework.settings.KafSettings;
 import br.org.knob.android.framework.util.Util;
@@ -36,13 +43,21 @@ public class MapService extends GenericService implements GoogleApiClient.Connec
         locationService = new LocationService(context);
 
         // Google Maps API
-        if(mGoogleApiClient == null) {
+        if (mGoogleApiClient == null) {
             mGoogleApiClient = new GoogleApiClient.Builder(context)
                     .addConnectionCallbacks(this)
                     .addOnConnectionFailedListener(this)
                     .addApi(LocationServices.API)
                     .build();
         }
+    }
+
+    public GoogleMap getMap() {
+        return map;
+    }
+
+    public void setMap(GoogleMap map) {
+        this.map = map;
     }
 
     @Override
@@ -79,10 +94,10 @@ public class MapService extends GenericService implements GoogleApiClient.Connec
     public Location getLastKnowLocation() {
         Location location = null;
 
-        if(mGoogleApiClient.isConnected()) {
+        if (mGoogleApiClient.isConnected()) {
             android.location.Location lastKnownLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 
-            if(lastKnownLocation != null) {
+            if (lastKnownLocation != null) {
                 Util.log(TAG, "Last know location: " + lastKnownLocation.toString());
 
                 location = new Location(
@@ -97,7 +112,7 @@ public class MapService extends GenericService implements GoogleApiClient.Connec
             }
         }
 
-        if(location == null) {
+        if (location == null) {
             // Couldn't get last know location from GPS, will try to get it from saved locations
             location = locationService.findLatest();
         }
@@ -117,7 +132,7 @@ public class MapService extends GenericService implements GoogleApiClient.Connec
     }
 
     public void setMapLocation(Location location, boolean animateCamera) {
-        if(location != null) {
+        if (location != null) {
             android.location.Location androidLocation = location.getAndroidLocation();
 
             if (map != null && androidLocation != null) {
@@ -139,13 +154,5 @@ public class MapService extends GenericService implements GoogleApiClient.Connec
                 map.addCircle(circle);
             }
         }
-    }
-
-    public GoogleMap getMap() {
-        return map;
-    }
-
-    public void setMap(GoogleMap map) {
-        this.map = map;
     }
 }

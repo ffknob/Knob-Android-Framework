@@ -12,6 +12,7 @@ public class OnSwipeTouchListener implements View.OnTouchListener {
     private Context context;
     private RecyclerView.ViewHolder viewHolder;
     private View view;
+    private Long id;
     private ItemTouchHelperAdapterListener itemTouchHelperAdapterListener;
 
     public OnSwipeTouchListener(Context context, ItemTouchHelperAdapterListener itemTouchHelperAdapterListener) {
@@ -20,12 +21,13 @@ public class OnSwipeTouchListener implements View.OnTouchListener {
         this.itemTouchHelperAdapterListener = itemTouchHelperAdapterListener;
     }
 
-    public OnSwipeTouchListener(Context context, RecyclerView.ViewHolder viewHolder, ItemTouchHelperAdapterListener itemTouchHelperAdapterListener) {
+    public OnSwipeTouchListener(Context context, RecyclerView.ViewHolder viewHolder, ItemTouchHelperAdapterListener itemTouchHelperAdapterListener, Long id) {
         gestureDetector = new GestureDetector(context, new GestureListener());
         this.context = context;
         this.viewHolder = viewHolder;
         if(viewHolder != null) this.view = viewHolder.itemView;
         this.itemTouchHelperAdapterListener = itemTouchHelperAdapterListener;
+        this.id = id; // Dataset item id
     }
 
     public Context getContext() {
@@ -58,6 +60,14 @@ public class OnSwipeTouchListener implements View.OnTouchListener {
 
     public void setItemTouchHelperAdapterListener(ItemTouchHelperAdapterListener itemTouchHelperAdapterListener) {
         this.itemTouchHelperAdapterListener = itemTouchHelperAdapterListener;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public boolean onTouch(final View view, final MotionEvent motionEvent) {
